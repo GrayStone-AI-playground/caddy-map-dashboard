@@ -1,36 +1,117 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Caddy Map Dashboard
 
-## Getting Started
+A Caddy-driven dashboard with three views:
 
-First, run the development server:
+- `Home`: mini-cards for quick jumping
+- `Caddy Map`: a dense routing table
+- `Details`: a shared modal for one service at a time
+
+The app is built to use **Caddy as the source of truth**, not a second hand-maintained service list.
+
+## Current scope
+
+- Reads Caddy config from one of three live sources:
+  - admin API JSON
+  - saved JSON config file
+  - `caddy adapt` against a local Caddyfile
+- Falls back to bundled demo data when no live source is configured
+- Normalizes common route types:
+  - `reverse_proxy`
+  - `file_server`
+  - redirects via `static_response`
+- Runs separate frontend and backend probes
+- Renders the chosen design iteration:
+  - homepage cards with `Open` and `Details`
+  - separate `Caddy Map` table
+  - shared detail modal
+
+## Why this repo is public-safe
+
+- No machine-specific paths are committed by default
+- `.env` files are ignored; only `.env.example` is tracked
+- Local runtime state is ignored:
+  - `runtime/`
+  - `tmp/`
+  - logs
+  - coverage output
+- The bundled example Caddyfile is generic: `examples/Caddyfile.example`
+
+## Quick start
+
+```bash
+npm install
+npm run dev
+```
+
+Open `http://localhost:3000`.
+
+If you do not configure a live Caddy source, the UI renders the bundled demo snapshot.
+
+## Live source options
+
+Set one of these in a local `.env.local`:
+
+```bash
+# Option 1: running Caddy admin API
+CADDY_ADMIN_URL=http://127.0.0.1:2019/config/
+
+# Option 2: saved JSON config
+CADDY_CONFIG_JSON_PATH=/absolute/path/to/caddy-config.json
+
+# Option 3: local Caddyfile
+CADDYFILE_PATH=/absolute/path/to/Caddyfile
+CADDY_BIN=caddy
+CADDY_ADAPTER=caddyfile
+```
+
+Other useful options:
+
+```bash
+CADDY_DASHBOARD_ALLOW_SELF_SIGNED=true
+NEXT_PUBLIC_REFRESH_INTERVAL_MS=10000
+CADDY_DASHBOARD_FRONTEND_TIMEOUT_MS=1500
+CADDY_DASHBOARD_BACKEND_TIMEOUT_MS=1200
+```
+
+See `.env.example`.
+
+## Scripts
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run lint
+npm run test
+npm run build
+npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Project layout
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```text
+app/
+  api/dashboard/route.ts   # dashboard snapshot API
+  page.tsx                 # initial server-rendered shell
+components/
+  dashboard-shell.tsx      # tabs, filters, polling, modal state
+  service-card.tsx         # Home mini-cards
+  caddy-map-table.tsx      # dense table view
+  service-detail-modal.tsx # shared detail view
+lib/
+  caddy/                   # source loading + normalization
+  dashboard/               # formatting + probe/cache service
+tests/
+  caddy/                   # normalization tests
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Notes
 
-## Learn More
+- The current normalizer intentionally focuses on common Caddy patterns first.
+- Ambiguous routes are surfaced rather than hidden. If multiple leaf routes collapse into one hostname, the record is marked as `mixed` and notes include `multiple routes`.
+- Automatic HTTP-to-HTTPS redirects generated for an already-served host are filtered out so they do not duplicate normal service cards.
 
-To learn more about Next.js, take a look at the following resources:
+## Open follow-ups
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- richer route normalization for more exotic handler trees
+- better file-server root extraction beyond simple `vars.root`
+- stronger handling for non-HTTP upstream transports
+- optional screenshots or visual regression coverage

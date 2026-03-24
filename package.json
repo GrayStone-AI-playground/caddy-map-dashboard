@@ -1,12 +1,15 @@
 {
-  "name": "003-caddy-map-dashboard",
+  "name": "caddy-map-dashboard",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
+  "description": "A Caddy-driven dashboard with homepage cards, a dense routing map, and service detail modals.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint .",
+    "test": "vitest run --coverage",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "next": "16.2.1",
@@ -18,9 +21,11 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitest/coverage-v8": "^4.1.1",
     "eslint": "^9",
     "eslint-config-next": "16.2.1",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.1"
   }
 }

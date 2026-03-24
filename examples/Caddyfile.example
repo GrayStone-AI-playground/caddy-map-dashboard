@@ -1,0 +1,28 @@
+{
+	admin :2019
+}
+
+inventree.caddy.lan {
+	reverse_proxy 127.0.0.1:8081
+}
+
+silverbullet.caddy.lan {
+	reverse_proxy 127.0.0.1:3000
+}
+
+cloudcli.caddy.lan {
+	reverse_proxy 127.0.0.1:3001
+}
+
+farfield.caddy.lan {
+	reverse_proxy 127.0.0.1:4312
+}
+
+notes.caddy.lan {
+	root * /srv/notes
+	file_server
+}
+
+old.caddy.lan {
+	redir https://new.caddy.lan
+}
