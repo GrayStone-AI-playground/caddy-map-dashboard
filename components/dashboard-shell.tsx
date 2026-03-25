@@ -24,6 +24,21 @@ function sortRouteTypes(services: DashboardSnapshot["services"]) {
   return [...new Set(services.map((service) => service.routeType))].sort();
 }
 
+function sourceLabel(kind: DashboardSnapshot["source"]["kind"]) {
+  switch (kind) {
+    case "admin":
+      return "Live Caddy";
+    case "json-file":
+      return "JSON file";
+    case "adapted-file":
+      return "Adapted Caddyfile";
+    case "demo":
+      return "Demo data";
+    default:
+      return kind;
+  }
+}
+
 export function DashboardShell({
   initialSnapshot,
 }: {
@@ -105,39 +120,31 @@ export function DashboardShell({
   return (
     <div className="relative flex-1 px-4 py-8 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl space-y-6">
-        <header className="overflow-hidden rounded-[32px] border border-[var(--border-strong)] bg-[var(--surface-strong)] px-6 py-6 shadow-[var(--shadow)]">
-          <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
-            <div className="max-w-3xl">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[var(--muted)]">
-                Caddy-driven routing homepage
-              </p>
-              <h1 className="mt-4 text-balance text-[clamp(2.2rem,4vw,4.3rem)] font-semibold leading-none tracking-[-0.06em] text-[var(--foreground)]">
-                Home cards for daily jumping.
-                <br />
-                A dense map when you need the truth.
+        <header className="overflow-hidden rounded-[28px] border border-[var(--border-strong)] bg-[var(--surface-strong)] px-5 py-5 shadow-[var(--shadow)]">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+            <div className="max-w-2xl">
+              <h1 className="text-[1.85rem] font-semibold tracking-[-0.04em] text-[var(--foreground)] sm:text-[2.1rem]">
+                Service Portal
               </h1>
-              <p className="mt-4 max-w-2xl text-base leading-7 text-[var(--muted)]">
-                The UI follows the chosen iteration directly: a readable homepage
-                grid, a separate Caddy Map table, and one shared detail modal for
-                dense per-service inspection.
+              <p className="mt-1 text-sm text-[var(--muted)]">
+                Quick links from the current Caddy config.
               </p>
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-4">
+            <div className="grid grid-cols-3 gap-2 sm:min-w-[320px]">
               {[
-                { label: "Entries", value: snapshot.summary.total },
-                { label: "Healthy", value: snapshot.summary.up },
-                { label: "Issues", value: snapshot.summary.unhealthy },
-                { label: "Source", value: snapshot.source.kind.replace("-", " ") },
+                { label: "Total", value: snapshot.summary.total },
+                { label: "Ready", value: snapshot.summary.up },
+                { label: "Attention", value: snapshot.summary.unhealthy },
               ].map((item) => (
                 <div
                   key={item.label}
-                  className="rounded-[22px] border border-[var(--border)] bg-white/65 px-4 py-4"
+                  className="rounded-[18px] border border-[var(--border)] bg-white/65 px-4 py-3"
                 >
-                  <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--muted)]">
+                  <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-[var(--muted)]">
                     {item.label}
                   </p>
-                  <p className="mt-2 text-2xl font-semibold tracking-[-0.04em] text-[var(--foreground)]">
+                  <p className="mt-1.5 text-xl font-semibold tracking-[-0.04em] text-[var(--foreground)]">
                     {item.value}
                   </p>
                 </div>
@@ -147,73 +154,72 @@ export function DashboardShell({
         </header>
 
         <section className="rounded-[28px] border border-[var(--border-strong)] bg-[var(--surface)] p-4 shadow-[var(--shadow)]">
-          <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-            <div className="grid gap-3 sm:grid-cols-[minmax(0,1.6fr)_180px_180px] xl:min-w-[62%]">
-              <input
-                className="min-h-12 rounded-2xl border border-[var(--border)] bg-white/70 px-4 text-sm text-[var(--foreground)] outline-none ring-0 placeholder:text-[var(--muted)] focus:border-[var(--accent)]/40"
-                placeholder="Search name, record, URL, or target"
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
-              />
-              <select
-                className="min-h-12 rounded-2xl border border-[var(--border)] bg-white/70 px-4 text-sm text-[var(--foreground)] outline-none focus:border-[var(--accent)]/40"
-                value={statusFilter}
-                onChange={(event) =>
-                  setStatusFilter(event.target.value as OverallState | "all")
-                }
-              >
-                <option value="all">All statuses</option>
-                <option value="up">Up</option>
-                <option value="warn">Warn</option>
-                <option value="down">Down</option>
-                <option value="unknown">Unknown</option>
-              </select>
-              <select
-                className="min-h-12 rounded-2xl border border-[var(--border)] bg-white/70 px-4 text-sm text-[var(--foreground)] outline-none focus:border-[var(--accent)]/40"
-                value={typeFilter}
-                onChange={(event) =>
-                  setTypeFilter(
-                    event.target.value as DashboardService["routeType"] | "all",
-                  )
-                }
-              >
-                <option value="all">All route types</option>
-                {routeTypes.map((routeType) => (
-                  <option key={routeType} value={routeType}>
-                    {routeType}
-                  </option>
-                ))}
-              </select>
+          <div className="space-y-3">
+            <div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_auto] xl:items-start">
+              <div className="space-y-3">
+                <input
+                  className="min-h-12 w-full rounded-2xl border border-[var(--border)] bg-white/70 px-4 text-sm text-[var(--foreground)] outline-none ring-0 placeholder:text-[var(--muted)] focus:border-[var(--accent)]/40"
+                  placeholder="Search name, record, URL, or target"
+                  value={search}
+                  onChange={(event) => setSearch(event.target.value)}
+                />
+                <div className="flex flex-wrap gap-2.5">
+                  <select
+                    className="min-h-10 w-[156px] max-w-full rounded-xl border border-[var(--border)] bg-white/70 px-3 text-sm text-[var(--foreground)] outline-none focus:border-[var(--accent)]/40"
+                    value={statusFilter}
+                    onChange={(event) =>
+                      setStatusFilter(event.target.value as OverallState | "all")
+                    }
+                  >
+                    <option value="all">All statuses</option>
+                    <option value="up">Up</option>
+                    <option value="warn">Warn</option>
+                    <option value="down">Down</option>
+                    <option value="unknown">Unknown</option>
+                  </select>
+                  <select
+                    className="min-h-10 w-[170px] max-w-full rounded-xl border border-[var(--border)] bg-white/70 px-3 text-sm text-[var(--foreground)] outline-none focus:border-[var(--accent)]/40"
+                    value={typeFilter}
+                    onChange={(event) =>
+                      setTypeFilter(
+                        event.target.value as DashboardService["routeType"] | "all",
+                      )
+                    }
+                  >
+                    <option value="all">All route types</option>
+                    {routeTypes.map((routeType) => (
+                      <option key={routeType} value={routeType}>
+                        {routeType}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex justify-start xl:justify-end">
+                <div className="inline-flex rounded-full border border-[var(--border-strong)] bg-white/70 p-1">
+                  {([
+                    ["home", "Portal"],
+                    ["map", "Routes"],
+                  ] as const).map(([tabKey, label]) => (
+                    <button
+                      key={tabKey}
+                      className={[
+                        "rounded-full px-4 py-2 text-sm font-medium",
+                        activeTab === tabKey
+                          ? "bg-[var(--accent-strong)] text-amber-50"
+                          : "text-[var(--foreground)] hover:bg-white",
+                      ].join(" ")}
+                      type="button"
+                      onClick={() => setActiveTab(tabKey)}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-3">
-              <div className="inline-flex rounded-full border border-[var(--border-strong)] bg-white/70 p-1">
-                {([
-                  ["home", "Home"],
-                  ["map", "Caddy Map"],
-                ] as const).map(([tabKey, label]) => (
-                  <button
-                    key={tabKey}
-                    className={[
-                      "rounded-full px-4 py-2 text-sm font-medium",
-                      activeTab === tabKey
-                        ? "bg-[var(--accent-strong)] text-amber-50"
-                        : "text-[var(--foreground)] hover:bg-white",
-                    ].join(" ")}
-                    type="button"
-                    onClick={() => setActiveTab(tabKey)}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
-              <div className="rounded-full border border-[var(--border)] bg-white/70 px-4 py-2 text-[12px] font-medium uppercase tracking-[0.18em] text-[var(--muted)]">
-                {snapshot.source.kind.replace("-", " ")} • {snapshot.source.label}
-              </div>
-              <div className="rounded-full border border-[var(--border)] bg-white/70 px-4 py-2 text-[12px] font-medium uppercase tracking-[0.18em] text-[var(--muted)]">
-                Auto refresh {Math.max(1, Math.round(refreshIntervalMs / 1000))}s
-              </div>
-            </div>
           </div>
         </section>
 
@@ -229,18 +235,33 @@ export function DashboardShell({
           </section>
         )}
 
-        <section className="flex flex-wrap items-center justify-between gap-3 rounded-[24px] border border-[var(--border)] bg-white/55 px-5 py-4 text-sm text-[var(--muted)]">
-          <p>
-            Showing <span className="font-semibold text-[var(--foreground)]">{filteredServices.length}</span>{" "}
-            of <span className="font-semibold text-[var(--foreground)]">{snapshot.summary.total}</span>{" "}
-            services
-          </p>
-          <p className="font-mono text-[12px] text-[var(--foreground)]">
-            Last sync {formatTimestamp(snapshot.summary.generatedAt)}
-            {snapshot.source.fileMTime
-              ? ` • file ${formatTimestamp(snapshot.source.fileMTime)}`
-              : ""}
-          </p>
+        <section className="rounded-[24px] border border-[var(--border)] bg-white/55 px-5 py-4 text-sm text-[var(--muted)]">
+          <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
+            <div className="flex flex-wrap items-center gap-3">
+              <p>
+                Showing <span className="font-semibold text-[var(--foreground)]">{filteredServices.length}</span>{" "}
+                of <span className="font-semibold text-[var(--foreground)]">{snapshot.summary.total}</span>{" "}
+                services
+              </p>
+              <p className="font-mono text-[12px] text-[var(--foreground)]">
+                Last sync {formatTimestamp(snapshot.summary.generatedAt)}
+                {snapshot.source.fileMTime
+                  ? ` • file ${formatTimestamp(snapshot.source.fileMTime)}`
+                  : ""}
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
+              <div className="self-start rounded-full border border-[var(--border)] bg-white/70 px-4 py-2 text-[12px] font-medium uppercase tracking-[0.18em] text-[var(--muted)]">
+                Auto refresh {Math.max(1, Math.round(refreshIntervalMs / 1000))}s
+              </div>
+              <div className="min-w-0 rounded-2xl border border-[var(--border)] bg-white/70 px-4 py-2.5 text-[12px] font-medium uppercase tracking-[0.18em] text-[var(--muted)] sm:max-w-xl xl:max-w-2xl">
+                <span className="block break-all sm:text-right">
+                  {sourceLabel(snapshot.source.kind)} • {snapshot.source.label}
+                </span>
+              </div>
+            </div>
+          </div>
         </section>
 
         {activeTab === "home" ? (

@@ -14,9 +14,9 @@ const monoFont = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Caddy Map Dashboard",
+  title: "Service Portal",
   description:
-    "A Caddy-driven dashboard for homepage cards, routing inspection, and service health.",
+    "A Caddy-driven portal for quick service links, route inspection, and lightweight status.",
 };
 
 export default function RootLayout({
