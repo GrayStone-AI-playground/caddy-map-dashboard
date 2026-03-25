@@ -41,13 +41,11 @@ function sourceLabel(kind: DashboardSnapshot["source"]["kind"]) {
 
 export function DashboardShell({
   initialSnapshot,
+  refreshIntervalMs,
 }: {
   initialSnapshot: DashboardSnapshot;
+  refreshIntervalMs: number;
 }) {
-  const refreshIntervalMs = Number.parseInt(
-    process.env.NEXT_PUBLIC_REFRESH_INTERVAL_MS ?? "10000",
-    10,
-  );
   const [snapshot, setSnapshot] = useState(initialSnapshot);
   const [activeTab, setActiveTab] = useState<TabKey>("home");
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
