@@ -24,4 +24,4 @@ wait_for_health
 log "installed ${APP_NAME}"
 log "env file: ${ENV_FILE}"
 log "service: systemctl status ${APP_NAME}"
-log "external Caddy snippets: ${APP_DIR}/ops/caddy/caddy-map-dashboard.http.caddy and ${APP_DIR}/ops/caddy/caddy-map-dashboard.https.caddy"
+log "external Caddy snippets: ${APP_DIR}/ops/caddy/caddy-map-dashboard.http.caddy, ${APP_DIR}/ops/caddy/caddy-map-dashboard.https.caddy, and ${APP_DIR}/ops/caddy/caddy-map-dashboard.https-public.caddy"

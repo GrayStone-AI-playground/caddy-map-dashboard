@@ -1,0 +1,7 @@
+# HTTPS example with automatic public certificates from Caddy.
+# Replace `portal.example.com` with your real public hostname.
+# If Caddy runs on another machine, replace `127.0.0.1:3211` with the app server IP and port.
+
+portal.example.com {
+	reverse_proxy 127.0.0.1:3211
+}

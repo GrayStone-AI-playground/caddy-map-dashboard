@@ -57,6 +57,7 @@ External Caddy examples are included here:
 
 - `ops/caddy/caddy-map-dashboard.http.caddy`
 - `ops/caddy/caddy-map-dashboard.https.caddy`
+- `ops/caddy/caddy-map-dashboard.https-public.caddy`
 
 ## Updating an installed host
 
@@ -87,7 +88,16 @@ http://portal.example.internal {
 }
 ```
 
-Same-host HTTPS example:
+Same-host internal HTTPS example:
+
+```caddy
+caddy.lan {
+	tls internal
+	reverse_proxy 127.0.0.1:3211
+}
+```
+
+Same-host public HTTPS example:
 
 ```caddy
 portal.example.com {
@@ -95,15 +105,15 @@ portal.example.com {
 }
 ```
 
-For internal hostnames like `caddy.lan`, browser HTTPS only works if the client trusts Caddy's local CA. Without that, you will get a certificate/security failure even if the proxy is otherwise correct.
+For internal hostnames like `caddy.lan`, `portal.lan`, or other non-public names, `tls internal` is required. Without it, Caddy will try public certificate issuance, fail, and the browser can see a TLS handshake failure before any certificate is presented.
 
-On the machine using the browser, trust Caddy's local CA or stay on plain HTTP for internal testing. On a Caddy host, the usual trust command is:
+After `tls internal` is in place, browser HTTPS only works if the client trusts Caddy's local CA. On the Caddy host, the usual trust command is:
 
 ```bash
 sudo caddy trust
 ```
 
-If the browser is on another machine, that client also needs the Caddy local root CA installed as trusted.
+If the browser is on another machine, that client also needs the Caddy local root CA installed as trusted. If you do not want to distribute that CA, stay on plain HTTP for internal-only testing.
 
 If Caddy runs on a different machine, replace `127.0.0.1:3211` with the app host IP and port, for example:
 
@@ -117,6 +127,7 @@ Tracked snippet files:
 
 - `ops/caddy/caddy-map-dashboard.http.caddy`
 - `ops/caddy/caddy-map-dashboard.https.caddy`
+- `ops/caddy/caddy-map-dashboard.https-public.caddy`
 
 ## Local development
 
@@ -158,6 +169,7 @@ Common runtime settings:
 ```bash
 PORT=3211
 HOSTNAME=127.0.0.1
+# Optional: set true if your frontend probes should trust internal/self-signed TLS.
 CADDY_DASHBOARD_ALLOW_SELF_SIGNED=false
 CADDY_DASHBOARD_DEMO_MODE=false
 CADDY_DASHBOARD_FRONTEND_TIMEOUT_MS=1500

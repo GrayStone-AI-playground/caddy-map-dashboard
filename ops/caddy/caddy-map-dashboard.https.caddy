@@ -1,7 +1,10 @@
-# HTTPS example with automatic certificates from Caddy.
-# Replace `portal.example.com` with your real public hostname.
+# HTTPS example for an internal hostname.
+# Replace `caddy.lan` with your hostname.
+# `tls internal` is required for names like `.lan`, `.local`, or other non-public hostnames.
+# Clients must trust Caddy's local CA.
 # If Caddy runs on another machine, replace `127.0.0.1:3211` with the app server IP and port.
 
-portal.example.com {
+caddy.lan {
+	tls internal
 	reverse_proxy 127.0.0.1:3211
 }
