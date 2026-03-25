@@ -53,6 +53,11 @@ What the installer does:
 - installs and starts `caddy-map-dashboard.service`
 - verifies `/api/health`
 
+External Caddy examples are included here:
+
+- `ops/caddy/caddy-map-dashboard.http.caddy`
+- `ops/caddy/caddy-map-dashboard.https.caddy`
+
 ## Updating an installed host
 
 From a checked-out repo:
@@ -69,6 +74,39 @@ systemctl status caddy-map-dashboard
 journalctl -u caddy-map-dashboard -f
 curl http://127.0.0.1:3211/api/health
 ```
+
+## External Caddy examples
+
+If your public or edge Caddy should proxy to this app, point it at the app service on `127.0.0.1:3211` by default.
+
+Same-host HTTP example:
+
+```caddy
+http://portal.example.internal {
+	reverse_proxy 127.0.0.1:3211
+}
+```
+
+Same-host HTTPS example:
+
+```caddy
+portal.example.com {
+	reverse_proxy 127.0.0.1:3211
+}
+```
+
+If Caddy runs on a different machine, replace `127.0.0.1:3211` with the app host IP and port, for example:
+
+```caddy
+portal.example.com {
+	reverse_proxy 10.0.0.25:3211
+}
+```
+
+Tracked snippet files:
+
+- `ops/caddy/caddy-map-dashboard.http.caddy`
+- `ops/caddy/caddy-map-dashboard.https.caddy`
 
 ## Local development
 

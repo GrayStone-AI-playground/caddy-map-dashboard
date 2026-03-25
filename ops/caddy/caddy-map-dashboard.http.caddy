@@ -1,0 +1,7 @@
+# Plain HTTP example for an internal network or temporary setup.
+# Replace `portal.example.internal` with your hostname.
+# If Caddy runs on another machine, replace `127.0.0.1:3211` with the app server IP and port.
+
+http://portal.example.internal {
+	reverse_proxy 127.0.0.1:3211
+}
