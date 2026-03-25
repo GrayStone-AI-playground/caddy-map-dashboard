@@ -23,13 +23,6 @@ export function getDemoSnapshot(extraIssues: string[] = []): DashboardSnapshot {
       transportHint: "http" as const,
       lastUpdated: checkedAt,
       overallStatus: "up" as const,
-      frontend: {
-        state: "up" as const,
-        label: "200 OK",
-        code: 200,
-        latencyMs: 83,
-        checkedAt,
-      },
       backend: {
         state: "up" as const,
         label: "TCP open",
@@ -51,14 +44,7 @@ export function getDemoSnapshot(extraIssues: string[] = []): DashboardSnapshot {
       sourcePaths: ["apps.http.servers.edge.routes[1]"],
       transportHint: "http" as const,
       lastUpdated: checkedAt,
-      overallStatus: "warn" as const,
-      frontend: {
-        state: "up" as const,
-        label: "200 OK",
-        code: 200,
-        latencyMs: 61,
-        checkedAt,
-      },
+      overallStatus: "down" as const,
       backend: {
         state: "down" as const,
         label: "Connection refused",
@@ -81,13 +67,6 @@ export function getDemoSnapshot(extraIssues: string[] = []): DashboardSnapshot {
       transportHint: "http" as const,
       lastUpdated: checkedAt,
       overallStatus: "up" as const,
-      frontend: {
-        state: "up" as const,
-        label: "200 OK",
-        code: 200,
-        latencyMs: 45,
-        checkedAt,
-      },
       backend: {
         state: "up" as const,
         label: "TCP open",
@@ -110,13 +89,6 @@ export function getDemoSnapshot(extraIssues: string[] = []): DashboardSnapshot {
       transportHint: "http" as const,
       lastUpdated: checkedAt,
       overallStatus: "up" as const,
-      frontend: {
-        state: "up" as const,
-        label: "200 OK",
-        code: 200,
-        latencyMs: 58,
-        checkedAt,
-      },
       backend: {
         state: "up" as const,
         label: "TCP open",
@@ -139,11 +111,6 @@ export function getDemoSnapshot(extraIssues: string[] = []): DashboardSnapshot {
       transportHint: "unknown" as const,
       lastUpdated: checkedAt,
       overallStatus: "unknown" as const,
-      frontend: {
-        state: "unknown" as const,
-        label: "Not probed",
-        checkedAt,
-      },
       backend: {
         state: "na" as const,
         label: "n/a",
@@ -164,14 +131,7 @@ export function getDemoSnapshot(extraIssues: string[] = []): DashboardSnapshot {
       sourcePaths: ["apps.http.servers.edge.routes[5]"],
       transportHint: "unknown" as const,
       lastUpdated: checkedAt,
-      overallStatus: "up" as const,
-      frontend: {
-        state: "up" as const,
-        label: "308 Redirect",
-        code: 308,
-        latencyMs: 22,
-        checkedAt,
-      },
+      overallStatus: "unknown" as const,
       backend: {
         state: "na" as const,
         label: "n/a",

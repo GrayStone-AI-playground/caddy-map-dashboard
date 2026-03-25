@@ -37,7 +37,6 @@ export interface DashboardServiceBase {
 
 export interface DashboardService extends DashboardServiceBase {
   overallStatus: OverallState;
-  frontend: ProbeResult;
   backend: ProbeResult;
 }
 

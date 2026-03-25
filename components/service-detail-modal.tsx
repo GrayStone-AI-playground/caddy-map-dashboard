@@ -54,6 +54,8 @@ export function ServiceDetailModal({
     return null;
   }
 
+  const statusLabel = service.routeType === "reverse_proxy" ? "Upstream" : "Route";
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-stone-950/35 px-4 py-8 backdrop-blur-sm"
@@ -108,28 +110,14 @@ export function ServiceDetailModal({
 
           <section className="rounded-[24px] border border-[var(--border)] bg-stone-950/[0.03] p-5">
             <h3 className="text-sm font-semibold uppercase tracking-[0.22em] text-[var(--muted)]">
-              Health
+              Status
             </h3>
             <div className="mt-4 space-y-4">
               <div className="rounded-2xl border border-[var(--border)] bg-white/70 p-4">
                 <div className="flex items-center justify-between gap-3">
-                  <p className="text-sm font-medium text-[var(--foreground)]">Frontend</p>
-                  <StatusBadge
-                    label={service.frontend.state}
-                    tone={service.frontend.state}
-                    compact
-                  />
-                </div>
-                <p className="mt-3 font-mono text-[13px] text-[var(--foreground)]">
-                  {service.frontend.label}
-                  {typeof service.frontend.latencyMs === "number"
-                    ? ` • ${service.frontend.latencyMs} ms`
-                    : ""}
-                </p>
-              </div>
-              <div className="rounded-2xl border border-[var(--border)] bg-white/70 p-4">
-                <div className="flex items-center justify-between gap-3">
-                  <p className="text-sm font-medium text-[var(--foreground)]">Backend</p>
+                  <p className="text-sm font-medium text-[var(--foreground)]">
+                    {statusLabel}
+                  </p>
                   <StatusBadge
                     label={service.backend.state}
                     tone={service.backend.state}
@@ -142,6 +130,11 @@ export function ServiceDetailModal({
                     ? ` • ${service.backend.latencyMs} ms`
                     : ""}
                 </p>
+                {service.backend.detail ? (
+                  <p className="mt-2 text-sm text-[var(--muted)]">
+                    {service.backend.detail}
+                  </p>
+                ) : null}
               </div>
             </div>
           </section>

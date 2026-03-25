@@ -52,34 +52,6 @@ function createProbe(state: ProbeState, label: string, detail?: string): ProbeRe
   };
 }
 
-function aggregateOverall(frontend: ProbeResult, backend: ProbeResult): OverallState {
-  if (frontend.state === "down") {
-    return "down";
-  }
-
-  if (frontend.state === "warn") {
-    return "warn";
-  }
-
-  if (backend.state === "down") {
-    return frontend.state === "up" ? "warn" : "down";
-  }
-
-  if (backend.state === "warn") {
-    return "warn";
-  }
-
-  if (frontend.state === "unknown") {
-    return "unknown";
-  }
-
-  if (backend.state === "unknown") {
-    return frontend.state === "up" ? "warn" : "unknown";
-  }
-
-  return "up";
-}
-
 async function probeHttpUrl(target: string, timeoutMs: number): Promise<ProbeResult> {
   const checkedAt = now();
   const startedAt = Date.now();
@@ -236,15 +208,24 @@ function summarizeProbeResults(results: ProbeResult[], defaultLabel: string): Pr
   return createProbe("unknown", defaultLabel);
 }
 
-async function probeFrontend(service: DashboardServiceBase) {
-  if (!service.url) {
-    return createProbe("unknown", "No primary URL");
+function aggregateOverall(
+  service: DashboardServiceBase,
+  backend: ProbeResult,
+): OverallState {
+  if (service.routeType !== "reverse_proxy") {
+    return "unknown";
   }
 
-  return probeHttpUrl(
-    service.url,
-    parseTimeout("CADDY_DASHBOARD_FRONTEND_TIMEOUT_MS", 1_500),
-  );
+  switch (backend.state) {
+    case "up":
+      return "up";
+    case "warn":
+      return "warn";
+    case "down":
+      return "down";
+    default:
+      return "unknown";
+  }
 }
 
 async function probeBackend(service: DashboardServiceBase) {
@@ -271,16 +252,12 @@ async function probeBackend(service: DashboardServiceBase) {
 }
 
 async function enrichService(service: DashboardServiceBase): Promise<DashboardService> {
-  const [frontend, backend] = await Promise.all([
-    probeFrontend(service),
-    probeBackend(service),
-  ]);
+  const backend = await probeBackend(service);
 
   return {
     ...service,
-    frontend,
     backend,
-    overallStatus: aggregateOverall(frontend, backend),
+    overallStatus: aggregateOverall(service, backend),
   };
 }
 

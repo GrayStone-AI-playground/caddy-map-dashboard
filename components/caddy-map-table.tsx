@@ -12,7 +12,6 @@ import { StatusBadge } from "@/components/status-badge";
 
 export type SortKey =
   | "overallStatus"
-  | "frontend"
   | "backend"
   | "displayName"
   | "record"
@@ -31,8 +30,7 @@ interface CaddyMapTableProps {
 
 const columnLabels: Record<SortKey, string> = {
   overallStatus: "Overall",
-  frontend: "Front",
-  backend: "Back",
+  backend: "Upstream",
   displayName: "Name",
   record: "Record",
   listeners: "Served on",
@@ -53,8 +51,6 @@ function sortValue(service: DashboardService, key: SortKey) {
   switch (key) {
     case "overallStatus":
       return overallSeverity[service.overallStatus];
-    case "frontend":
-      return probeSeverity[service.frontend.state];
     case "backend":
       return probeSeverity[service.backend.state];
     case "displayName":
@@ -139,13 +135,6 @@ export function CaddyMapTable({
                   <StatusBadge
                     label={service.overallStatus}
                     tone={service.overallStatus}
-                    compact
-                  />
-                </td>
-                <td className="border-b border-[var(--border)] px-4 py-4">
-                  <StatusBadge
-                    label={service.frontend.state}
-                    tone={service.frontend.state}
                     compact
                   />
                 </td>

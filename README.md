@@ -169,7 +169,7 @@ Common runtime settings:
 ```bash
 PORT=3211
 HOSTNAME=127.0.0.1
-# Optional: set true if your frontend probes should trust internal/self-signed TLS.
+# Optional: set true if HTTPS checks should trust internal/self-signed TLS.
 CADDY_DASHBOARD_ALLOW_SELF_SIGNED=false
 CADDY_DASHBOARD_DEMO_MODE=false
 CADDY_DASHBOARD_FRONTEND_TIMEOUT_MS=1500
