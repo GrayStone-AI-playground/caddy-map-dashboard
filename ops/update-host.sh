@@ -5,6 +5,8 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 # shellcheck disable=SC1091
 source "$REPO_ROOT/ops/lib/common.sh"
 
+chmod +x "$REPO_ROOT/ops/prepare-standalone.sh"
+
 require_root
 require_supported_os
 install_base_packages

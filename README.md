@@ -95,6 +95,16 @@ portal.example.com {
 }
 ```
 
+For internal hostnames like `caddy.lan`, browser HTTPS only works if the client trusts Caddy's local CA. Without that, you will get a certificate/security failure even if the proxy is otherwise correct.
+
+On the machine using the browser, trust Caddy's local CA or stay on plain HTTP for internal testing. On a Caddy host, the usual trust command is:
+
+```bash
+sudo caddy trust
+```
+
+If the browser is on another machine, that client also needs the Caddy local root CA installed as trusted.
+
 If Caddy runs on a different machine, replace `127.0.0.1:3211` with the app host IP and port, for example:
 
 ```caddy
@@ -170,6 +180,8 @@ corepack pnpm start
 ```bash
 node .next/standalone/server.js
 ```
+
+The build also copies `public/` and `.next/static/` into `.next/standalone/`, which is required for CSS, JS, fonts, and other static assets to load correctly behind a reverse proxy.
 
 ## Repo safety
 
